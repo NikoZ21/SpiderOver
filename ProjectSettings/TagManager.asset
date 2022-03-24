@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - ExitDoor
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - ForeGround
+  - Water
+  - UI
+  - BackGround
+  - Player
+  - Enemy
+  - Bullet
+  - Web
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: ForeGround
+    uniqueID: 3502191323
+    locked: 0
+  - name: Interactables
+    uniqueID: 4214925443
+    locked: 0
+  - name: Bullet
+    uniqueID: 1427462383
+    locked: 0
+  - name: Web
+    uniqueID: 2040283349
+    locked: 0
+  - name: Enemy
+    uniqueID: 1569713125
+    locked: 0
+  - name: VFX
+    uniqueID: 3038075423
+    locked: 0
+  - name: Player
+    uniqueID: 309413267
+    locked: 0
