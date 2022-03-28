@@ -18,6 +18,9 @@ public class Health : MonoBehaviour
     private void Start()
     {
         _currentHealth = maxHealth;
+        _rigidBody = GetComponent<Rigidbody2D>();
+        _circleCollider2D = GetComponent<CircleCollider2D>();
+        _capsuleCollider2D = GetComponent<CapsuleCollider2D>();
     }
 
     void Die()
