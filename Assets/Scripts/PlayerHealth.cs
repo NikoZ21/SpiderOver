@@ -5,29 +5,32 @@ using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
-    [SerializeField] float deathDelay = 1.5f;
     [SerializeField] Image image;
     [SerializeField] Sprite[] hearts;
-    [SerializeField] int maxHealth = 300;
     [SerializeField] HealthBar healthbar;
+    [SerializeField] int maxHealth = 300;
     [SerializeField] public bool isAlive = true;
-    int currentHealth;
-    Animator animator;
-   
+    [SerializeField] float deathDelay = 1.5f;
+
+    private Animator _animator;
+    private Rigidbody2D _rb;
+    private BoxCollider2D _boxCollider2D;
+    private int _currentHealth;
+
 
     private void Start()
     {
-        currentHealth = maxHealth;
+        _currentHealth = maxHealth;
         healthbar.SetMaxHealth(maxHealth);
-        animator = GetComponent<Animator>();
+        _animator = GetComponent<Animator>();
     }
 
     public void TakeDamage(int damage)
     {
-        currentHealth -= damage;
-        healthbar.SetHealth(currentHealth);
+        _currentHealth -= damage;
+        healthbar.SetHealth(_currentHealth);
         SwappingHeartImage();
-        if (currentHealth < 0)
+        if (_currentHealth < 0)
         {
             Die();
         }
@@ -35,7 +38,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void SwappingHeartImage()
     {
-        int index = (currentHealth / 100);
+        int index = (_currentHealth / 100);
         if (index < 0 || index > 2) return;
         image.sprite = hearts[index];
     }
@@ -50,12 +53,12 @@ public class PlayerHealth : MonoBehaviour
 
     void DisablingMovement()
     {
-        GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-        GetComponent<BoxCollider2D>().enabled = false;
+        _rb.bodyType = RigidbodyType2D.Static;
+        _boxCollider2D.enabled = false;
     }
 
     void PlayDeathAnim()
     {
-        animator.SetTrigger("Die");
+        _animator.SetTrigger("Die");
     }
 }

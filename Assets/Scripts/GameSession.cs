@@ -4,36 +4,51 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class GameSession : MonoBehaviour
 {
-    int currentIndex;
+
+    private int _currentIndex;
+
+
     void Start()
     {
-        currentIndex = SceneManager.GetActiveScene().buildIndex;
-        Debug.Log(currentIndex);
+        _currentIndex = SceneManager.GetActiveScene().buildIndex;
     }
+
     private void Update()
+    {
+        QuitApplication();
+        ResetGame();
+    }
+
+    private void QuitApplication()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Application.Quit();
         }
-        if(Input.GetKeyDown(KeyCode.T))
+    }
+
+    private void ResetGame()
+    {
+        if (Input.GetKeyDown(KeyCode.T))
         {
             SceneManager.LoadScene(0);
         }
     }
+
     public void LoadNextLevel()
     {
-        if (currentIndex == SceneManager.sceneCountInBuildSettings - 1)
+        if (_currentIndex == SceneManager.sceneCountInBuildSettings - 1)
         {
             SceneManager.LoadScene(0);
         }
         else
         {
-            SceneManager.LoadScene(currentIndex + 1);
+            SceneManager.LoadScene(_currentIndex + 1);
         }
     }
+
     public void ResetScene()
     {
-        SceneManager.LoadScene(currentIndex);
+        SceneManager.LoadScene(_currentIndex);
     }
 }

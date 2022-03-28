@@ -13,47 +13,75 @@ public class Pistol : MonoBehaviour
     [SerializeField] float reloadSpeed = 0.2f;
     [SerializeField] TextMeshProUGUI ammoCountText;
 
-    int currentAmmo;
-    bool reloading;
-    float timeToShoot;
+    private int _currentAmmo;
+    private bool _reloading;
+    private float _timeToShoot;
+
 
     private void Start()
     {
-        currentAmmo = maxAmmo;
-        ammoCountText.text = currentAmmo + " / " + maxAmmo;
+        _currentAmmo = maxAmmo;
+        UpdateAmooUI();
+    }
+
+    private void UpdateAmooUI()
+    {
+        ammoCountText.text = _currentAmmo + " / " + maxAmmo;
     }
 
     void Update()
     {
-        if (Input.GetButton("Fire1") && Time.time > timeToShoot && currentAmmo > 0 && reloading == false)
+        if (CheckIfCanShoot()) 
         {
             Shoot();
         }
-        if (Input.GetKeyDown(KeyCode.R) && reloading == false)
+
+        if (CheckIfCanReload())
         {
-            reloading = true;
+            _reloading = true;
             StartCoroutine(Reload());
         }
     }
 
-    private IEnumerator Reload()
+    private bool CheckIfCanShoot()
     {
-        for (int i = currentAmmo; i < maxAmmo; i++)
-        {
-            currentAmmo++;
-            ammoCountText.text = currentAmmo + " / " + maxAmmo;
-            yield return new WaitForSeconds(reloadSpeed);
-        }
-        reloading = false;
+        return Input.GetButton("Fire1") && Time.time > _timeToShoot && _currentAmmo > 0 && _reloading == false;
     }
 
     private void Shoot()
     {
+        InstantiateBullet();
+        ProccessAfterShooting();
+    }
+    
+    private void InstantiateBullet()
+    {
         GameObject bullet = Instantiate(bulletPrefab, pistolFirePoint.position, transform.rotation);
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         rb.AddForce(pistolFirePoint.right * pistolBulletForce, ForceMode2D.Impulse);
-        timeToShoot = Time.time + pistolFireRate;
-        currentAmmo--;
-        ammoCountText.text = currentAmmo + " / " + maxAmmo;
     }
+
+    private void ProccessAfterShooting()
+    {
+        _timeToShoot = Time.time + pistolFireRate;
+        _currentAmmo--;
+        UpdateAmooUI();
+    }
+
+    private bool CheckIfCanReload()
+    {
+        return Input.GetKeyDown(KeyCode.R) && _reloading == false;
+    }
+
+    private IEnumerator Reload()
+    {
+        for (int i = _currentAmmo; i < maxAmmo; i++)
+        {
+            _currentAmmo++;
+            UpdateAmooUI();
+            yield return new WaitForSeconds(reloadSpeed);
+        }
+        _reloading = false;
+    }
+
 }

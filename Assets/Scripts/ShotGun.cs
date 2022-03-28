@@ -16,66 +16,93 @@ public class ShotGun : MonoBehaviour
     [SerializeField] float reloadSpeed = 0.2f;
     [SerializeField] TextMeshProUGUI ammoCountText;
 
-    int currentAmmo;
-    float timeToShoot;
-    bool reloading;
+    private int _currentAmmo;
+    private float _timeToShoot;
+    private bool _reloading;
+    private float _angleOne;
+    private float _angleTwo;
 
     private void Start()
     {
-        currentAmmo = maxAmmo;
-        ammoCountText.text = currentAmmo + " / " + maxAmmo;
+        _currentAmmo = maxAmmo;
+        UpdateAmmoUI();
+    }
+
+    private void UpdateAmmoUI()
+    {
+        ammoCountText.text = _currentAmmo + " / " + maxAmmo;
     }
 
     void Update()
     {
-        if (Input.GetButton("Fire1") && Time.time > timeToShoot && currentAmmo > 0 )
+        if (CheckIfCanShoot())
         {
+
             Shoot();
         }
-        if (Input.GetKeyDown(KeyCode.R) && reloading == false)
+        if (CheckIfCanReload())
         {
-            reloading = true;
+            _reloading = true;
             StartCoroutine(Reload());
         }
     }
 
-    private IEnumerator Reload()
+    private bool CheckIfCanShoot()
     {
-        for (int i = currentAmmo; i < maxAmmo; i++)
-        {
-            currentAmmo++;
-            ammoCountText.text = currentAmmo + " / " + maxAmmo;
-            yield return new WaitForSeconds(reloadSpeed);
-        }
-        reloading = false;
+        return Input.GetButton("Fire1") && Time.time > _timeToShoot && _currentAmmo > 0;
+    }
+
+    private void CalculateAngles()
+    {
+        _angleOne = Mathf.Atan2((bulletOne.position - shotGunFirePoint.position).y, (bulletOne.position - shotGunFirePoint.position).x) * Mathf.Rad2Deg;
+        _angleTwo = Mathf.Atan2((bulletThree.position - shotGunFirePoint.position).y, (bulletThree.position - shotGunFirePoint.position).x) * Mathf.Rad2Deg;
     }
 
     private void Shoot()
     {
-        //bullet one...
-        float angleOne = Mathf.Atan2((bulletOne.position - shotGunFirePoint.position).y, (bulletOne.position - shotGunFirePoint.position).x) * Mathf.Rad2Deg;
-        var firstBullet = Instantiate(shotgunBullet, shotGunFirePoint.position, Quaternion.identity);
-        var firstBulletRB = firstBullet.GetComponent<Rigidbody2D>();
-        firstBulletRB.rotation = angleOne;
-        firstBulletRB.AddRelativeForce(firstBullet.transform.right * shotgunBulletForce, ForceMode2D.Impulse);
+        CalculateAngles();
+        ShootBullet(_angleOne);
+        ShootBullet();
+        ShootBullet(_angleTwo);
+        ProccessAfterShooting();
+    }
 
-        //bullet two...
+    private void ShootBullet(float angle)
+    {
+        var bullet = Instantiate(shotgunBullet, shotGunFirePoint.position, Quaternion.identity);
+        var bulletRB = bullet.GetComponent<Rigidbody2D>();
+        bulletRB.rotation = angle;
+        bulletRB.AddRelativeForce(bullet.transform.right * shotgunBulletForce, ForceMode2D.Impulse);
+    }
+
+    private void ShootBullet()
+    {
         var secondBullet = Instantiate(shotgunBullet, shotGunFirePoint.position, transform.rotation);
         var secondBulletRB = secondBullet.GetComponent<Rigidbody2D>();
         secondBulletRB.AddForce(secondBullet.transform.right * shotgunBulletForce, ForceMode2D.Impulse);
-
-        //third bullet...
-        float angleThree = Mathf.Atan2((bulletThree.position - shotGunFirePoint.position).y, (bulletThree.position - shotGunFirePoint.position).x) * Mathf.Rad2Deg;
-        var thirdBullet = Instantiate(shotgunBullet, shotGunFirePoint.position, Quaternion.identity);
-        var thirdBulletRB = thirdBullet.GetComponent<Rigidbody2D>();
-        thirdBulletRB.rotation = angleThree;
-        thirdBulletRB.AddRelativeForce(thirdBullet.transform.right * shotgunBulletForce, ForceMode2D.Impulse);
-
-        //fire-rate
-        timeToShoot = Time.time + shotgunFireRate;
-
-        //decreasing ammo
-        currentAmmo--;
-        ammoCountText.text = currentAmmo + " / " + maxAmmo;
     }
+
+    private void ProccessAfterShooting()
+    {
+        _timeToShoot = Time.time + shotgunFireRate;
+        _currentAmmo--;
+        UpdateAmmoUI();
+    }
+
+    private bool CheckIfCanReload()
+    {
+        return Input.GetKeyDown(KeyCode.R) && _reloading == false;
+    }
+
+    private IEnumerator Reload()
+    {
+        for (int i = _currentAmmo; i < maxAmmo; i++)
+        {
+            _currentAmmo++;
+            UpdateAmmoUI();
+            yield return new WaitForSeconds(reloadSpeed);
+        }
+        _reloading = false;
+    }
+
 }

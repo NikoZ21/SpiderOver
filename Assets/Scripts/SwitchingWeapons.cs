@@ -3,37 +3,36 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SwitchingWeapons : MonoBehaviour
-{   //serialized-fields
+{
     [SerializeField] GameObject pistol;
     [SerializeField] GameObject shotGun;
 
-    //private-fields
-    bool shotGunEquipped = false;
-    UpdatingUIForWeapons weaponsUI;
+    private bool hasShotGunEquipped = false;
+    private UpdatingUIForWeapons _weaponsUI;
 
     void Start()
     {
         shotGun.SetActive(false);
-        weaponsUI =FindObjectOfType<UpdatingUIForWeapons>();
+        _weaponsUI = FindObjectOfType<UpdatingUIForWeapons>();
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q) && shotGunEquipped == false)
+        if (Input.GetKeyDown(KeyCode.Q) && hasShotGunEquipped == false)
         {
-            shotGun.SetActive(true);          
-            pistol.SetActive(false);
-            weaponsUI.SetToShotGunUI();
-            shotGunEquipped = true;
+            SwitchWeapons(hasShotGunEquipped,1);
         }
-        else if (Input.GetKeyDown(KeyCode.Q) && shotGunEquipped == true)
+        else if (Input.GetKeyDown(KeyCode.Q) && hasShotGunEquipped == true)
         {
-            shotGun.SetActive(false);
-            pistol.SetActive(true);
-            weaponsUI.SetToPistolUI();
-            shotGunEquipped = false;
+            SwitchWeapons(hasShotGunEquipped,0);
         }
     }
 
-
+    private void SwitchWeapons(bool isSwitching,int x)
+    {
+        shotGun.SetActive(!isSwitching);
+        pistol.SetActive(isSwitching);
+        _weaponsUI.ChnageBetweenGunsUI(x, hasShotGunEquipped);
+        hasShotGunEquipped = !isSwitching;
+    }
 }

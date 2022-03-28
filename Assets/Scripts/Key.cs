@@ -3,17 +3,26 @@ using UnityEngine.UI;
 
 public class Key : MonoBehaviour
 {
+    //serialized variables
     [SerializeField] Image keyImage;
-    CapsuleCollider2D capsuleCollider;
+
+    //cached variables
+    private CapsuleCollider2D _capsuleCollider;
+
 
     private void Start()
     {
-        capsuleCollider = GetComponent<CapsuleCollider2D>();
+        _capsuleCollider = GetComponent<CapsuleCollider2D>();
     }
 
     private void Update()
     {
-        if (capsuleCollider.IsTouchingLayers(LayerMask.GetMask("Player")))
+        PickUpKey();
+    }
+
+    private void PickUpKey()
+    {
+        if (_capsuleCollider.IsTouchingLayers(LayerMask.GetMask("Player")))
         {
             keyImage.color = Color.white;
             Destroy(gameObject);

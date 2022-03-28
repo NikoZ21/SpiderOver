@@ -5,33 +5,39 @@ using UnityEngine;
 public class SpiderBite : MonoBehaviour
 {
     [SerializeField] int biteDamage = 30;
-    CapsuleCollider2D biteCollider;
-    Animator animator;
+
     public bool biting = false;
+
+    private CapsuleCollider2D _biteCollider;
+    private Animator _animator;
+    private PlayerHealth _playerHealth;
+
     void Start()
     {
-        biteCollider = GetComponent<CapsuleCollider2D>();
-        animator = GetComponent<Animator>();
+        _biteCollider = GetComponent<CapsuleCollider2D>();
+        _animator = GetComponent<Animator>();
+        _playerHealth = FindObjectOfType<PlayerHealth>();
     }
 
     void Update()
     {
-        if(biteCollider.IsTouchingLayers(LayerMask.GetMask("Player")))
+        if (_biteCollider.IsTouchingLayers(LayerMask.GetMask("Player")))
         {
-            animator.SetBool("IsAttacking",true);
-            biting = true;
+            ChangeBiteAnimation(true);
         }
         else
         {
-            biting = false;
-            animator.SetBool("IsAttacking", false);
+            ChangeBiteAnimation(false);
         }
+    }
+
+    private void ChangeBiteAnimation(bool isBiting)
+    {
+        _animator.SetBool("IsAttacking", biting = isBiting);
     }
 
     public void Bite()
     {
-        var playerhealth = FindObjectOfType<PlayerHealth>();
-        playerhealth.TakeDamage(biteDamage);
-
+        _playerHealth.TakeDamage(biteDamage);
     }
 }

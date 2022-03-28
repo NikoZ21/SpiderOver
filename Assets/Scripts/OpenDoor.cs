@@ -5,25 +5,43 @@ using UnityEngine.SceneManagement;
 
 public class OpenDoor : MonoBehaviour
 {
-    Animator animator;
-    BoxCollider2D boxCollider2D;
+    private Animator _animator;
+    private BoxCollider2D _boxCollider2D;
+    private GameSession _gameSession;
+
+
     private void Start()
     {
-        boxCollider2D = GetComponent<BoxCollider2D>();
-        animator = GetComponent<Animator>();
+        _boxCollider2D = GetComponent<BoxCollider2D>();
+        _animator = GetComponent<Animator>();
+        _gameSession = FindObjectOfType<GameSession>();
     }
 
     private void Update()
     {
-        animator.SetBool("Open", boxCollider2D.IsTouchingLayers(LayerMask.GetMask("Player")));
-        if (gameObject.name == "ExitDoor" && boxCollider2D.IsTouchingLayers(LayerMask.GetMask("Player")) && FindObjectsOfType<Key>().Length <= 0)
+        ValidateExit();
+    }
+
+    private void ValidateExit()
+    {
+        bool isCorrectName = gameObject.name == "ExitDoor";
+        bool isPlayer = _boxCollider2D.IsTouchingLayers(LayerMask.GetMask("Player"));
+        bool hasEnoughKeys = FindObjectsOfType<Key>().Length <= 0;
+
+        if (isCorrectName && isPlayer)
         {
-            FindObjectOfType<GameSession>().LoadNextLevel();
+            if (!hasEnoughKeys) return;
+            SetDoorAnimation();
+            _gameSession.LoadNextLevel();
         }
-        else if(gameObject.name == "ExitDoor" && boxCollider2D.IsTouchingLayers(LayerMask.GetMask("Player")) && FindObjectsOfType<Key>().Length > 0)
+        else
         {
             Debug.Log("Find All Keys");
         }
+    }
 
+    private void SetDoorAnimation()
+    {
+        _animator.SetBool("Open", _boxCollider2D.IsTouchingLayers(LayerMask.GetMask("Player")));
     }
 }

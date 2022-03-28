@@ -4,21 +4,29 @@ using UnityEngine;
 
 public class FollowPlayer : MonoBehaviour
 {
+    //serilized
     [SerializeField] Vector3 offSet;
-    PlayerMovement player;
+
+    //Cached-variables
+    private PlayerMovement _player;
+
+
     void Start()
     {
-        player = FindObjectOfType<PlayerMovement>();
+        _player = FindObjectOfType<PlayerMovement>();
         offSet = new Vector3(0, 0, -10);
     }
 
-    // Update is called once per frame
+
     void LateUpdate()
     {
-        if(player == null)
-        {
-            return;
-        }
-        transform.position = player.transform.position + offSet;
+        if (_player == null) return;
+
+        SetCameraPosition();
+    }
+
+    private void SetCameraPosition()
+    {
+        transform.position = _player.transform.position + offSet;
     }
 }

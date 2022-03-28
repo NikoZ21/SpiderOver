@@ -4,33 +4,37 @@ using UnityEngine;
 
 public class MeleeSpider : MonoBehaviour
 {
+    //Serialized variabless
     [SerializeField] float moveSpeed = 5f;
     [SerializeField] bool canChase = false;
     [SerializeField] float tuneAngle = 90f;
-    BoxCollider2D playerDetection;
-    [SerializeField] PlayerMovement player;
-    Rigidbody2D rb;
-    Animator animator;
+
+    //Cached variables
+    private PlayerMovement _player;
+    private BoxCollider2D _playerDetection;
+    private Rigidbody2D _rb;
+    private Animator _animator;
+    private Health _health;
+
+
     void Start()
     {
-        player = FindObjectOfType<PlayerMovement>();
-        rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-        playerDetection = GetComponent<BoxCollider2D>();
+        _health = GetComponent<Health>();
+        _player = FindObjectOfType<PlayerMovement>();
+        _rb = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+        _playerDetection = GetComponent<BoxCollider2D>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (GetComponent<Health>().isAlive == false) return;
-        ChaseOrNot();
-        if (canChase == false) return;
-        ChasingPlayer();
+        if (_health.isAlive == true) ChaseOrNot();
+        if (canChase == true) ChasingPlayer();
     }
 
     private void ChaseOrNot()
     {
-        if (playerDetection.IsTouchingLayers(LayerMask.GetMask("Player")))
+        if (_playerDetection.IsTouchingLayers(LayerMask.GetMask("Player")))
         {
             canChase = true;
         }
@@ -38,26 +42,45 @@ public class MeleeSpider : MonoBehaviour
 
     private void ChasingPlayer()
     {
-        if (player == null) return;
-        Vector3 direction = (player.transform.position - transform.position).normalized;
+        if (_player == null) return;
+
+        Vector3 direction = SetDistanceToPlayer();
+        SetSpiderRotation(direction);
+        SetAnimation();
+    }
+
+    private Vector3 SetDistanceToPlayer()
+    {
+        Vector3 direction = (_player.transform.position - transform.position).normalized;
+        _rb.velocity = direction * moveSpeed;
+        return direction;
+    }
+
+    private void SetSpiderRotation(Vector3 direction)
+    {
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + tuneAngle;
-        rb.rotation = angle;
-        rb.velocity = direction * moveSpeed;
-        if (Mathf.Abs(rb.velocity.x) > 0 && GetComponent<SpiderBite>().biting == false)
+        _rb.rotation = angle;
+    }
+
+    private void SetAnimation()
+    {
+        if (Mathf.Abs(_rb.velocity.x) > 0 && GetComponent<SpiderBite>().biting == false)
         {
-            animator.SetBool("IsWalking", true);
-            canChase = true;
+            SetChaseAnimation(true);
         }
-        else if (Mathf.Abs(rb.velocity.y) > 0 && GetComponent<SpiderBite>().biting == false)
+        else if (Mathf.Abs(_rb.velocity.y) > 0 && GetComponent<SpiderBite>().biting == false)
         {
-            animator.SetBool("IsWalking", true);
-            canChase = true;
+            SetChaseAnimation(true);
         }
         else
         {
-            animator.SetBool("IsWalking", false);
-            canChase = false;
+            SetChaseAnimation(false);
         }
+    }
+
+    private void SetChaseAnimation(bool _canChase)
+    {
+        _animator.SetBool("IsWalking", canChase = _canChase);
     }
 
     public void SetMovementSpeed(float speed)

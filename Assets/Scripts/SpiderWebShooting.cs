@@ -8,40 +8,51 @@ public class SpiderWebShooting : MonoBehaviour
     [SerializeField] Transform webShootPoint;
     [SerializeField] float webSpeed = 2f;
     [SerializeField] float tuneAngle = 180;
-    PlayerMovement player;
-    Rigidbody2D rb;
-    Animator animator;
-    CircleCollider2D shootRangeCollider;
+
     public bool shootingWeb;
-    float timeToShoot;
-    float pistolFireRate = 0.3f;
+
+    private CircleCollider2D _shootRangeCollider;
+    private PlayerMovement _player;
+    private Rigidbody2D _rb;
+    private Animator _animator;
+    private Health _health;
 
 
     void Start()
     {
-        player = FindObjectOfType<PlayerMovement>();
-        rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-        shootRangeCollider = GetComponent<CircleCollider2D>();
+        _player = FindObjectOfType<PlayerMovement>();
+        _rb = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+        _shootRangeCollider = GetComponent<CircleCollider2D>();
+        _health = GetComponent<Health>();
     }
+
     private void Update()
     {
-        if (GetComponent<Health>().isAlive == false) return;
-        if (player == null) return;
-        Vector3 direction = (player.transform.position - transform.position).normalized;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + tuneAngle;
-        rb.rotation = angle;
-        if (shootRangeCollider.IsTouchingLayers(LayerMask.GetMask("Player")))
+        if (_health.isAlive == false || _player == null) return;
+
+        RotateSpider();
+
+        if (_shootRangeCollider.IsTouchingLayers(LayerMask.GetMask("Player")))
         {
-            animator.SetBool("IsAttacking", true);
-            shootingWeb = true;
-            timeToShoot = Time.time + pistolFireRate;
+            ChangeAttackAnimation(true);
         }
         else
         {
-            shootingWeb = false;
-            animator.SetBool("IsAttacking", false);
+            ChangeAttackAnimation(false);
         }
+    }
+
+    private void RotateSpider()
+    {
+        Vector3 direction = (_player.transform.position - transform.position).normalized;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + tuneAngle;
+        _rb.rotation = angle;
+    }
+
+    private void ChangeAttackAnimation(bool isAttacking)
+    {
+        _animator.SetBool("IsAttacking", shootingWeb = isAttacking);
     }
 
     public void ShootWeb()
@@ -49,6 +60,5 @@ public class SpiderWebShooting : MonoBehaviour
         GameObject web = Instantiate(webPrefab, webShootPoint.position, transform.rotation);
         var webRb = web.GetComponent<Rigidbody2D>();
         webRb.AddForce(web.transform.right * -1 * webSpeed, ForceMode2D.Impulse);
-        Debug.Log("I shot");
     }
 }

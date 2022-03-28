@@ -16,17 +16,10 @@ public class UpdatingUIForWeapons : MonoBehaviour
         ShotgunCanvas.SetActive(false);
     }
 
-    public void SetToPistolUI()
+    public void ChnageBetweenGunsUI(int x, bool isSwitching)
     {
-        gunHolder.sprite = guns[0];
-        ShotgunCanvas.SetActive(false);
-        pistolCanvas.SetActive(true);
-    }
-
-    public void SetToShotGunUI()
-    {
-        gunHolder.sprite = guns[1];
-        ShotgunCanvas.SetActive(true);
-        pistolCanvas.SetActive(false);
+        gunHolder.sprite = guns[x];
+        ShotgunCanvas.SetActive(!isSwitching);
+        pistolCanvas.SetActive(isSwitching);
     }
 }
