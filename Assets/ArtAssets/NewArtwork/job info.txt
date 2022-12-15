@@ -1,0 +1,19 @@
+
+(to be worked on)
+
+rework of escape system :
+keys changed to keycards which found by searching desks or drawers sometimes dead people
+keys can unlock doors to acsess more doors, some with spiders, some with keycards. continue until exit key is found which is used
+ to escape if you can.
+__________________________________
+(artwork)
+ i will be making pixel art for furniture please place these around the map
+map :
+add desks, dead people, chairs, drawers, webs, around the map
+__________________________________
+------------------
+files to be used :
+furniture
+web decoration
+key cards
+structure

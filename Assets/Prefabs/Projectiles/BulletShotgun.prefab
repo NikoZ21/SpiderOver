@@ -95,7 +95,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1427462383
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: af8e1736b5da838438f1bce18086d888, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -137,6 +137,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitEffect: {fileID: 6206305711254233405, guid: a60d246bf7dea2c409a866cbd57d4c98, type: 3}
-  damage: 50
+  damage: 40
   bulletLifeTime: 0.05
   hitEffectLifeTime: 1
